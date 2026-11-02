@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CloudVault - Secure Cloud File Storage & Access Management</title>
+    <meta name="description" content="Production-grade secure cloud file storage and access management system with AES-256-GCM encryption, JWT authentication, and Spring Boot 3 architecture." />
+    <meta property="og:title" content="CloudVault - Secure Cloud File Storage" />
+    <meta property="og:description" content="Secure cloud file storage with AES-256-GCM encryption and role-based access management." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body class="dark-theme">
+    <div id="app-container">
+
+      <!-- ========================================== -->
+      <!-- 1. AUTH SCREEN (Shown when logged out)     -->
+      <!-- ========================================== -->
+      <section id="auth-screen" class="auth-section">
+        <div class="auth-card">
+          <div class="auth-header">
+            <div class="brand-lockup">
+              <div class="brand-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <rect x="9" y="11" width="6" height="5" rx="1"/>
+                  <path d="M10 11V9a2 2 0 1 1 4 0v2"/>
+                </svg>
+              </div>
+              <div class="brand-text">
+                <h1 class="brand-title">CloudVault</h1>
+                <p class="brand-subtitle">Enterprise AES-256-GCM Cloud Storage</p>
+              </div>
+            </div>
+
+            <!-- Segmented Auth Mode Switcher -->
+            <div class="auth-tabs" role="tablist">
+              <button type="button" id="tab-login" class="auth-tab-btn active" role="tab" aria-selected="true">Sign In</button>
+              <button type="button" id="tab-register" class="auth-tab-btn" role="tab" aria-selected="false">Create Account</button>
+            </div>
+          </div>
+
+          <!-- Auth Forms -->
+          <div class="auth-body">
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form" autocomplete="on">
+              <div class="form-group">
+                <label for="login-username">Username or Email</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input type="text" id="login-username" name="username" placeholder="alex.architect" required autofocus />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="login-password">Password</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <input type="password" id="login-password" name="password" placeholder="••••••••••••" required />
+                </div>
+              </div>
+
+              <div class="auth-form-footer">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="remember-me" checked />
+                  <span>Remember session token</span>
+                </label>
+              </div>
+
+              <button type="submit" id="btn-login-submit" class="btn btn-primary btn-block">
+                <span>Sign In to Vault</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </button>
+
+              <!-- Quick Demo Fill -->
+              <div class="demo-account-hint">
+                <span>Try quick demo account:</span>
+                <button type="button" id="btn-fill-demo" class="btn-text-link">Load Demo Credentials</button>
+              </div>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="register-form" class="auth-form hidden" autocomplete="off">
+              <div class="form-group">
+                <label for="reg-username">Username</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input type="text" id="reg-username" name="username" placeholder="alex.developer" minlength="3" required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-email">Work Email</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <input type="email" id="reg-email" name="email" placeholder="alex@company.com" required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-password">Password (min 8 chars)</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <input type="password" id="reg-password" name="password" placeholder="••••••••••••" minlength="8" required />
+                </div>
+              </div>
+
+              <div class="quota-provision-notice">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <span>Includes 1.0 GB dedicated encrypted storage quota</span>
+              </div>
+
+              <button type="submit" id="btn-reg-submit" class="btn btn-primary btn-block">
+                <span>Create Encrypted Vault</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </button>
+            </form>
+          </div>
+
+          <div class="auth-card-footer">
+            <span class="security-stamp">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              AES-256-GCM Zero-Knowledge Pipeline
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 2. MAIN STORAGE DASHBOARD (When Logged In) -->
+      <!-- ========================================== -->
+      <section id="dashboard-screen" class="dashboard-layout hidden">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+          <div class="sidebar-top">
+            <div class="brand-lockup">
+              <div class="brand-icon small">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <rect x="9" y="11" width="6" height="5" rx="1"/>
+                  <path d="M10 11V9a2 2 0 1 1 4 0v2"/>
+                </svg>
+              </div>
+              <div class="brand-text">
+                <span class="brand-title">CloudVault</span>
+                <span class="brand-version">Spring Boot 3</span>
+              </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-nav">
+              <button type="button" class="nav-item active" data-view="files-view">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>All Files</span>
+                <span id="badge-file-count" class="nav-count tabular-nums">0</span>
+              </button>
+
+              <button type="button" class="nav-item" data-view="shared-view">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="18" cy="5" r="3"/>
+                  <circle cx="6" cy="12" r="3"/>
+                  <circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+                <span>Shared Links</span>
+                <span id="badge-share-count" class="nav-count tabular-nums">0</span>
+              </button>
+
+              <button type="button" class="nav-item" data-view="audit-view">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                <span>Audit Logs</span>
+              </button>
+
+              <button type="button" class="nav-item" data-view="java-view">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16 18 22 12 16 6"/>
+                  <polyline points="8 6 2 12 8 18"/>
+                </svg>
+                <span>Java Spring Boot 3 Spec</span>
+              </button>
+
+              <button type="button" class="nav-item" data-view="settings-view">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Security Settings</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Sidebar Bottom: Storage Quota Widget & User Profile -->
+          <div class="sidebar-bottom">
+            <!-- Quota Widget -->
+            <div class="quota-widget">
+              <div class="quota-header">
+                <span class="quota-label">Storage Usage</span>
+                <span id="quota-percent-text" class="quota-value tabular-nums">0%</span>
+              </div>
+              <div class="progress-bar-track">
+                <div id="quota-progress-fill" class="progress-bar-fill" style="width: 0%;"></div>
+              </div>
+              <div class="quota-footer text-xs">
+                <span id="quota-used-text" class="tabular-nums">0 MB</span> of <span class="tabular-nums">1.0 GB</span>
+              </div>
+            </div>
+
+            <!-- Current User & Logout -->
+            <div class="user-profile-strip">
+              <div class="user-avatar">
+                <span id="user-avatar-initials">U</span>
+              </div>
+              <div class="user-details">
+                <span id="user-display-name" class="user-name">Loading...</span>
+                <span id="user-role-badge" class="user-role">ROLE_USER</span>
+              </div>
+              <button type="button" id="btn-logout" class="btn-icon" title="Sign out" aria-label="Sign out">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-viewport">
+          
+          <!-- TOP HEADER -->
+          <header class="top-header">
+            <!-- Search Bar -->
+            <div class="search-wrapper">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="text" id="file-search-input" placeholder="Search encrypted files by name or mime type..." autocomplete="off" />
+              <button type="button" id="btn-clear-search" class="btn-clear hidden" aria-label="Clear search">&times;</button>
+            </div>
+
+            <!-- Quick Stats & Actions -->
+            <div class="header-right">
+              <div class="stat-pill">
+                <span class="stat-num tabular-nums" id="stat-total-files">0</span>
+                <span class="stat-title">Files</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-num tabular-nums" id="stat-encrypted-files">0</span>
+                <span class="stat-title">Encrypted (AES-GCM)</span>
+              </div>
+
+              <!-- Quick Upload Action Trigger -->
+              <button type="button" id="btn-quick-upload-trigger" class="btn btn-primary btn-sm">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>Upload File</span>
+              </button>
+            </div>
+          </header>
+
+          <!-- VIEW CONTAINERS -->
+          <div class="content-scroll-area">
+
+            <!-- 1. ALL FILES VIEW -->
+            <section id="view-files" class="viewport-section active">
+              
+              <!-- Upload Dropzone Area -->
+              <div id="upload-dropzone" class="dropzone-card">
+                <input type="file" id="file-picker-input" class="hidden-input" />
+                <div class="dropzone-content">
+                  <div class="dropzone-icon">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                  </div>
+                  <div class="dropzone-copy">
+                    <p class="dropzone-primary">Drag & drop sensitive files here, or <span class="highlight-browse">browse system</span></p>
+                    <p class="dropzone-secondary text-xs">Maximum 50MB per file · Auto-encrypted client/server with AES-256-GCM before S3 storage</p>
+                  </div>
+                </div>
+
+                <!-- Live Upload Progress Card (Hidden until uploading) -->
+                <div id="upload-progress-box" class="upload-progress-box hidden">
+                  <div class="upload-progress-info">
+                    <div class="file-info-col">
+                      <span id="uploading-filename" class="font-medium">filename.pdf</span>
+                      <span id="uploading-status-label" class="upload-stage-label text-xs">Encrypting with AES-256-GCM...</span>
+                    </div>
+                    <span id="upload-percentage" class="upload-percentage-text tabular-nums">0%</span>
+                  </div>
+                  <div class="progress-bar-track">
+                    <div id="upload-progress-bar" class="progress-bar-fill accent-cyan" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- File Explorer Section -->
+              <div class="table-container-card">
+                <div class="table-header-strip">
+                  <div class="strip-left">
+                    <h2 class="section-title">Encrypted Storage Repository</h2>
+                    <span class="text-xs text-muted" id="file-count-label">Showing all files</span>
+                  </div>
+                  <div class="strip-right">
+                    <button type="button" id="btn-refresh-files" class="btn btn-secondary btn-xs">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"/>
+                        <polyline points="1 20 1 14 7 14"/>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                      </svg>
+                      <span>Sync</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Files Table -->
+                <div class="table-responsive">
+                  <table class="file-table" id="files-table">
+                    <thead>
+                      <tr>
+                        <th class="col-name">File Name</th>
+                        <th class="col-size text-right">Size</th>
+                        <th class="col-mime">MIME Type</th>
+                        <th class="col-crypto">Cipher Suite</th>
+                        <th class="col-sha">SHA-256 Digest</th>
+                        <th class="col-date">Uploaded</th>
+                        <th class="col-actions text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="files-tbody">
+                      <!-- Populated dynamically via app.js -->
+                    </tbody>
+                  </table>
+
+                  <!-- Empty State -->
+                  <div id="files-empty-state" class="empty-state-box hidden">
+                    <div class="empty-icon">
+                      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                        <polyline points="13 2 13 9 20 9"/>
+                      </svg>
+                    </div>
+                    <h3>No files stored in this vault yet</h3>
+                    <p class="text-xs text-muted">Upload a file using the dropzone above. All payloads are automatically encrypted with AES-256-GCM.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 2. SHARED FILES VIEW -->
+            <section id="view-shared" class="viewport-section hidden">
+              <div class="table-container-card">
+                <div class="table-header-strip">
+                  <div class="strip-left">
+                    <h2 class="section-title">Active Secure Share Tokens</h2>
+                    <span class="text-xs text-muted">Time-bound access links with revocable UUID tokens</span>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="file-table" id="shares-table">
+                    <thead>
+                      <tr>
+                        <th>Target File</th>
+                        <th>Shared With</th>
+                        <th>Permission</th>
+                        <th>Share Token</th>
+                        <th>Expires At</th>
+                        <th>Status</th>
+                        <th class="text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="shares-tbody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+
+                  <div id="shares-empty-state" class="empty-state-box">
+                    <div class="empty-icon">
+                      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="18" cy="5" r="3"/>
+                        <circle cx="6" cy="12" r="3"/>
+                        <circle cx="18" cy="19" r="3"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                      </svg>
+                    </div>
+                    <h3>No share links created</h3>
+                    <p class="text-xs text-muted">Click the Share button on any file in your storage list to generate a secure, expiring download token.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 3. AUDIT LOGS VIEW -->
+            <section id="view-audit" class="viewport-section hidden">
+              <div class="table-container-card">
+                <div class="table-header-strip">
+                  <div class="strip-left">
+                    <h2 class="section-title">Security & Access Audit Trail</h2>
+                    <span class="text-xs text-muted">Immutable cryptographic event journal logged to MySQL</span>
+                  </div>
+                  <div class="strip-right">
+                    <button type="button" id="btn-refresh-audit" class="btn btn-secondary btn-xs">Refresh Logs</button>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="file-table" id="audit-table">
+                    <thead>
+                      <tr>
+                        <th>Timestamp</th>
+                        <th>Action</th>
+                        <th>File ID</th>
+                        <th>IP Address</th>
+                        <th>Security Details</th>
+                      </tr>
+                    </thead>
+                    <tbody id="audit-tbody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <!-- 4. JAVA SPRING BOOT 3 CODE & ARCHITECTURE EXPLORER -->
+            <section id="view-java" class="viewport-section hidden">
+              <div class="architecture-container">
+                <div class="arch-header">
+                  <div>
+                    <h2 class="section-title">Spring Boot 3 Backend Architecture & Code Explorer</h2>
+                    <p class="text-xs text-muted">Inspect the complete production-grade Java 17/21 repository generated for CloudVault</p>
+                  </div>
+                  <div class="arch-controls">
+                    <button type="button" id="btn-copy-java-code" class="btn btn-secondary btn-xs">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                      <span>Copy Current File</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="arch-body">
+                  <!-- File Tree Sidebar -->
+                  <div class="arch-tree">
+                    <div class="tree-category">Configuration & Properties</div>
+                    <button type="button" class="tree-item active" data-file="application.properties">application.properties</button>
+                    <button type="button" class="tree-item" data-file="S3Config.java">S3Config.java</button>
+                    <button type="button" class="tree-item" data-file="SecurityConfig.java">SecurityConfig.java</button>
+                    <button type="button" class="tree-item" data-file="JwtTokenProvider.java">JwtTokenProvider.java</button>
+                    <button type="button" class="tree-item" data-file="JwtAuthenticationFilter.java">JwtAuthenticationFilter.java</button>
+
+                    <div class="tree-category">Cryptography Service</div>
+                    <button type="button" class="tree-item" data-file="EncryptionService.java">EncryptionService.java (AES-256-GCM)</button>
+
+                    <div class="tree-category">Entities & Repositories</div>
+                    <button type="button" class="tree-item" data-file="User.java">User.java</button>
+                    <button type="button" class="tree-item" data-file="FileMetadata.java">FileMetadata.java</button>
+                    <button type="button" class="tree-item" data-file="FileShare.java">FileShare.java</button>
+                    <button type="button" class="tree-item" data-file="AuditLog.java">AuditLog.java</button>
+                    <button type="button" class="tree-item" data-file="UserRepository.java">UserRepository.java</button>
+                    <button type="button" class="tree-item" data-file="FileMetadataRepository.java">FileMetadataRepository.java</button>
+                    <button type="button" class="tree-item" data-file="FileShareRepository.java">FileShareRepository.java</button>
+
+                    <div class="tree-category">Services & Business Logic</div>
+                    <button type="button" class="tree-item" data-file="S3StorageService.java">S3StorageService.java (AWS v2)</button>
+                    <button type="button" class="tree-item" data-file="FileService.java">FileService.java</button>
+                    <button type="button" class="tree-item" data-file="AuthService.java">AuthService.java</button>
+                    <button type="button" class="tree-item" data-file="AuditService.java">AuditService.java</button>
+
+                    <div class="tree-category">REST Controllers & Exceptions</div>
+                    <button type="button" class="tree-item" data-file="AuthController.java">AuthController.java</button>
+                    <button type="button" class="tree-item" data-file="FileController.java">FileController.java</button>
+                    <button type="button" class="tree-item" data-file="ShareController.java">ShareController.java</button>
+                    <button type="button" class="tree-item" data-file="GlobalExceptionHandler.java">GlobalExceptionHandler.java</button>
+
+                    <div class="tree-category">Build & Specs</div>
+                    <button type="button" class="tree-item" data-file="pom.xml">pom.xml</button>
+                    <button type="button" class="tree-item" data-file="README.md">README.md</button>
+                  </div>
+
+                  <!-- Code View Window -->
+                  <div class="arch-viewer">
+                    <div class="viewer-top-bar">
+                      <span id="viewer-filename" class="font-mono text-xs">application.properties</span>
+                      <span class="text-xs text-muted" id="viewer-lang-badge">PROPERTIES</span>
+                    </div>
+                    <pre class="code-pre"><code id="code-display" class="font-mono">Loading file contents...</code></pre>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 5. SETTINGS VIEW -->
+            <section id="view-settings" class="viewport-section hidden">
+              <div class="settings-card">
+                <h2 class="section-title">Cryptographic Parameters & Security Specs</h2>
+                <div class="specs-grid">
+                  <div class="spec-tile">
+                    <span class="spec-label">Symmetric Cipher</span>
+                    <span class="spec-value">AES-256-GCM (NoPadding)</span>
+                    <span class="spec-desc">256-bit symmetric key, authenticated encryption providing confidentiality & integrity.</span>
+                  </div>
+                  <div class="spec-tile">
+                    <span class="spec-label">Initialization Vector (IV)</span>
+                    <span class="spec-value font-mono">12 Bytes (96 Bits)</span>
+                    <span class="spec-desc">Fresh IV generated per encryption using cryptographically secure PRNG.</span>
+                  </div>
+                  <div class="spec-tile">
+                    <span class="spec-label">Auth Tag Length</span>
+                    <span class="spec-value font-mono">128 Bits (16 Bytes)</span>
+                    <span class="spec-desc">Appended authentication tag to detect any tampering or bit rot.</span>
+                  </div>
+                  <div class="spec-tile">
+                    <span class="spec-label">Storage Backend</span>
+                    <span class="spec-value">AWS S3 (AWS SDK Java v2)</span>
+                    <span class="spec-desc">Encrypted object storage with per-tenant isolation keys.</span>
+                  </div>
+                  <div class="spec-tile">
+                    <span class="spec-label">Integrity Hashing</span>
+                    <span class="spec-value font-mono">SHA-256</span>
+                    <span class="spec-desc">Pre-encryption cryptographic digest verified on storage and downloads.</span>
+                  </div>
+                  <div class="spec-tile">
+                    <span class="spec-label">Token Format</span>
+                    <span class="spec-value">JJWT 0.12.5 (HS256)</span>
+                    <span class="spec-desc">Stateless Bearer authentication with 24-hour expiration window.</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 3. SHARE MODAL DIALOG                      -->
+      <!-- ========================================== -->
+      <div id="share-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+        <div class="modal-box">
+          <div class="modal-header">
+            <h3 id="share-modal-title" class="modal-title">Create Expiring Share Link</h3>
+            <button type="button" class="btn-close-modal" id="btn-close-share-modal" aria-label="Close modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p class="text-xs text-muted mb-4">
+              Sharing file: <strong id="modal-share-filename" class="text-light">filename.ext</strong>
+            </p>
+
+            <form id="share-form">
+              <input type="hidden" id="modal-share-file-id" />
+
+              <div class="form-group">
+                <label for="share-recipient-email">Recipient Email (Optional)</label>
+                <input type="email" id="share-recipient-email" placeholder="colleague@company.com" />
+              </div>
+
+              <div class="form-group">
+                <label>Expiration Period</label>
+                <div class="segmented-expiry-group">
+                  <label class="expiry-radio-btn">
+                    <input type="radio" name="share-expiry" value="1" />
+                    <span>1 Hour</span>
+                  </label>
+                  <label class="expiry-radio-btn">
+                    <input type="radio" name="share-expiry" value="24" checked />
+                    <span>24 Hours</span>
+                  </label>
+                  <label class="expiry-radio-btn">
+                    <input type="radio" name="share-expiry" value="168" />
+                    <span>7 Days</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Access Permission</label>
+                <div class="segmented-expiry-group">
+                  <label class="expiry-radio-btn">
+                    <input type="radio" name="share-permission" value="DOWNLOAD" checked />
+                    <span>Download</span>
+                  </label>
+                  <label class="expiry-radio-btn">
+                    <input type="radio" name="share-permission" value="VIEW" />
+                    <span>View Only</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit" id="btn-generate-share" class="btn btn-primary btn-block">
+                Generate Share Link
+              </button>
+            </form>
+
+            <!-- Result Link Container (Hidden until created) -->
+            <div id="share-result-box" class="share-result-box hidden">
+              <label class="text-xs text-muted">Shareable Link (Expires after chosen duration)</label>
+              <div class="copy-url-wrapper">
+                <input type="text" id="share-url-output" readonly />
+                <button type="button" id="btn-copy-share-url" class="btn btn-secondary btn-sm">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+              <div class="test-link-action mt-2">
+                <button type="button" id="btn-test-share-link" class="btn-text-link text-xs">
+                  Test link in vault viewer &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- 4. PUBLIC SHARE VIEWER MODAL               -->
+      <!-- ========================================== -->
+      <div id="public-share-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+        <div class="modal-box">
+          <div class="modal-header">
+            <h3 class="modal-title">CloudVault Secure File Access</h3>
+            <button type="button" class="btn-close-modal" id="btn-close-public-modal">&times;</button>
+          </div>
+          <div class="modal-body text-center">
+            <div class="public-vault-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h4 id="pub-filename" class="font-semibold text-lg mt-2">Document.pdf</h4>
+            <p class="text-xs text-muted mt-1" id="pub-meta">Size: -- · AES-256-GCM Verified</p>
+            <div class="token-validity-strip mt-3">
+              <span class="text-xs">Security Status: Valid Cryptographic Share Token</span>
+            </div>
+            <div class="mt-4">
+              <button type="button" id="btn-public-download" class="btn btn-primary btn-block">
+                <span>Decrypt & Download File</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- 5. DELETE CONFIRMATION MODAL               -->
+      <!-- ========================================== -->
+      <div id="delete-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+        <div class="modal-box modal-box-sm">
+          <div class="modal-header">
+            <h3 class="modal-title text-danger">Confirm File Deletion</h3>
+            <button type="button" class="btn-close-modal" id="btn-close-delete-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p class="text-sm">Are you sure you want to delete <strong id="delete-filename-target" class="text-light">file.ext</strong>?</p>
+            <p class="text-xs text-muted mt-2">This will remove the encrypted blob from AWS S3, mark the record deleted, and reclaim your quota.</p>
+            <div class="modal-actions-row mt-4">
+              <button type="button" id="btn-cancel-delete" class="btn btn-secondary">Cancel</button>
+              <button type="button" id="btn-confirm-delete" class="btn btn-danger">Permanently Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOAST CONTAINER -->
+      <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    </div>
+
+    <!-- Application Script -->
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

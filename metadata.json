@@ -1,0 +1,6 @@
+{
+  "name": "CloudVault - Secure Cloud File Storage",
+  "description": "Production-grade secure cloud file storage and access management system with AES-256-GCM encryption, JWT authentication, and Spring Boot 3 architecture.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
